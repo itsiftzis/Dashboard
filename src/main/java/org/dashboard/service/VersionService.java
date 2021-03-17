@@ -10,8 +10,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -29,35 +32,43 @@ public class VersionService {
     public Map<String, Build> fetchData() throws ExecutionException, InterruptedException {
 
         Map<String, String> mapping = configProperties.getMapping();
-        Map<String, Build> buildInfo = new HashMap<>();
+
+        List<CompletableFuture<Build>> futuresList = new ArrayList<>();
 
         for (Map.Entry<String, String> pair : mapping.entrySet()) {
-            Build build = fetchVersion(pair.getValue()).get();
-            buildInfo.put(pair.getKey(), build);
-            System.out.printf("added %s ", pair.getKey());
+            CompletableFuture<Build> build = CompletableFuture.supplyAsync(() -> fetchVersion(pair.getValue(), pair.getKey()));
+            futuresList.add(build);
         }
 
-        return buildInfo.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futuresList.toArray(new CompletableFuture[0]));
+        CompletableFuture<List<Build>> allCompletableFuture = allFutures.thenApply(future -> futuresList.stream().map(CompletableFuture::join)
+            .collect(Collectors.toList()));
+
+        CompletableFuture<List<Build>> completableFuture = allCompletableFuture.toCompletableFuture();
+
+        List<Build> sortedList = completableFuture.get();
+        sortedList.sort(Comparator.comparing(Build::getName));
+
+        return sortedList.stream().collect(Collectors.toMap(Build::getId, build -> build, (oldV, newV) -> newV, LinkedHashMap::new));
+
     }
 
-    @Async
-    public CompletableFuture<Build> fetchVersion(String value) {
+    public Build fetchVersion(String value, String key) {
         Info info;
         try {
-            info = convertDate(restTemplate.getForObject(value, Info.class));
+            info = convertDate(restTemplate.getForObject(value, Info.class), key);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             info = new Info();
             info.setBuild(new Build());
         }
 
-        return CompletableFuture.completedFuture(info.getBuild());
+        return info.getBuild();
     }
 
-    private Info convertDate(Info info) {
+    private Info convertDate(Info info, String key) {
         Object time = info.getBuild().getTime();
+        info.getBuild().setId(key);
         if (time instanceof String) {
             info.getBuild().setTime(time);
         } else if (time instanceof Double) {

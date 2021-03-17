@@ -22,8 +22,8 @@ class VersionServiceSpec extends Specification {
 
     def "populate a map with version properties"() {
         given:
-            def mapping = ["sdc-mil-dev1": "url"]
-            def build = new Build(artifact: "artifact", version: "version", name: "name", group: "group", time: LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+            def mapping = ["name": "url"]
+            def build = new Build(id: "id", artifact: "artifact", version: "version", name: "name", group: "group", time: LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
         when:
             def data = versionService.fetchData()
@@ -34,11 +34,11 @@ class VersionServiceSpec extends Specification {
             0 * _
 
         and:
-            data["sdc-mil-dev1"]
-            data["sdc-mil-dev1"].artifact == build.artifact
-            data["sdc-mil-dev1"].version == build.version
-            data["sdc-mil-dev1"].name == build.name
-            data["sdc-mil-dev1"].group == build.group
-            data["sdc-mil-dev1"].time == build.time
+            data["name"].id == build.id
+            data["name"].artifact == build.artifact
+            data["name"].version == build.version
+            data["name"].name == build.name
+            data["name"].group == build.group
+            data["name"].time == build.time
     }
 }
