@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.4.3'
+}
+
+group 'org.dashboard'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
