@@ -4,6 +4,8 @@ public class Build {
     private String artifact;
     private String name;
     private String group;
+    private String version;
+    private Object time;
 
     public String getVersion() {
         return version;
@@ -12,9 +14,6 @@ public class Build {
     public void setVersion(String version) {
         this.version = version;
     }
-
-    private String version;
-    private Object time;
 
     public String getArtifact() {
         return artifact;
