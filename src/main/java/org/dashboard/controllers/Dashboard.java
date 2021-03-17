@@ -18,7 +18,10 @@ public class Dashboard {
 
     @GetMapping(path = "dashboard")
     public ModelAndView dashboard() throws ExecutionException, InterruptedException {
+        final long startTimer = System.currentTimeMillis();
         Map<String, Build> modelMap = versionService.fetchData();
+        final long endTimer = System.currentTimeMillis();
+        System.out.printf("fetch lasted %s milli seconds%n", endTimer - startTimer);
         return new ModelAndView("dashboard", Map.of("hosts", modelMap));
     }
 }

@@ -56,11 +56,15 @@ public class VersionService {
     public Build fetchVersion(String value, String key) {
         Info info;
         try {
-            info = convertDate(restTemplate.getForObject(value, Info.class), key);
+            Info infoObject = restTemplate.getForObject(value, Info.class);
+            if (infoObject != null) {
+                info = convertDate(infoObject, key);
+            } else {
+                info = Info.emptyInfo();
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            info = new Info();
-            info.setBuild(new Build());
+            info = Info.emptyInfo();
         }
 
         return info.getBuild();
