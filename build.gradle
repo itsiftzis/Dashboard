@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.4.3'
     id 'groovy'
+    id 'jacoco'
 }
 
 group 'org.dashboard'
@@ -25,3 +26,60 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+check.dependsOn jacocoTestCoverageVerification
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            includes = ['org.dashboard.controllers.*', 'org.dashboard.service.*']
+            excludes = ['org.dashboard.configuration.*', 'org.dashboard.dto.*', 'org.dashboard.application.*']
+        }
+
+        rule {
+            limit {
+                counter = 'INSTRUCTION'
+                minimum = 0.80
+            }
+        }
+        rule {
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.80
+            }
+        }
+        rule {
+            limit {
+                includes = ['org.dashboard.controllers.*', 'org.dashboard.service.*']
+                excludes = ['org.dashboard.configuration.*', 'org.dashboard.dto.*', 'org.dashboard.application.*']
+                counter = 'COMPLEXITY'
+                minimum = 0.80
+            }
+        }
+        rule {
+            limit {
+                includes = ['org.dashboard.controllers.*', 'org.dashboard.service.*']
+                excludes = ['org.dashboard.configuration.*', 'org.dashboard.dto.*', 'org.dashboard.application.*']
+                counter = 'METHOD'
+                minimum = 0.80
+            }
+        }
+
+    }
+}
