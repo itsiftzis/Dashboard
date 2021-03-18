@@ -61,6 +61,7 @@ public class VersionService {
                 info = convertDate(infoObject, key);
             } else {
                 info = Info.emptyInfo();
+                info.getBuild().setId(key);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -79,7 +80,7 @@ public class VersionService {
             info.getBuild().setTime(LocalDateTime.ofEpochSecond(((Double) time).longValue(), 0, ZoneOffset.UTC).toString());
         } else if (time instanceof Map) {
             Integer timeEpoch = (Integer) ((Map) time).get("epochSecond");
-            info.getBuild().setTime(LocalDateTime.ofEpochSecond(timeEpoch, 0, ZoneOffset.UTC));
+            info.getBuild().setTime(LocalDateTime.ofEpochSecond(timeEpoch, 0, ZoneOffset.UTC).toString());
         }
         return info;
     }
