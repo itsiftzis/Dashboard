@@ -20,6 +20,7 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2.0.1
         with:
           jacoco-csv-file: "build/jacocoCsv/jacoco.csv"
+          badges-directory: ".github/workflows/"
 
       - name: Log coverage percentage
         run: |
