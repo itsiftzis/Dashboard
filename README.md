@@ -1,4 +1,4 @@
 # Dashboard
 dashboard project
 
-![build](.github/workflows/jacoco.svg)
+![build](.github/badges/jacoco.svg)
