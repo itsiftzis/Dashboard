@@ -1,5 +1,4 @@
 # Dashboard
 dashboard project
 
-![build](https://github.com/github/docs/actions/workflows/build.yml/jacoco.svg)
-
+![build](https://github/workflow/status/itsiftzis/Dashboard/build.yml/jacoco.svg)
