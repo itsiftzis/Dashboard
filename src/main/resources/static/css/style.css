@@ -2,3 +2,11 @@ table, th, td {
     border: 1px solid black;
     text-align: center;
 }
+
+tr:nth-child(even) {
+    background: #94cac2
+}
+
+tr:nth-child(odd) {
+    background: #cf7373
+}
