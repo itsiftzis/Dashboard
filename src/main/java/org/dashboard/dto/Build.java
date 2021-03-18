@@ -55,4 +55,16 @@ public class Build {
     public void setTime(Object time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        return "Build{" +
+            "artifact='" + artifact + '\'' +
+            ", name='" + name + '\'' +
+            ", group='" + group + '\'' +
+            ", version='" + version + '\'' +
+            ", time=" + time +
+            ", id='" + id + '\'' +
+            '}';
+    }
 }

@@ -18,4 +18,11 @@ public class Info {
     }
 
     private Build build;
+
+    @Override
+    public String toString() {
+        return "Info{" +
+            "build=" + build +
+            '}';
+    }
 }
