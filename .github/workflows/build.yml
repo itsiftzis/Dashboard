@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: 14
       - name: Build with Gradle
-        run: ./gradlew check test build
+        run: ./gradlew check test build -i
 
       - name: Generate JaCoCo Badge
         id: jacoco
