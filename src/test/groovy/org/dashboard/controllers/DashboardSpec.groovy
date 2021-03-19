@@ -15,9 +15,6 @@ class DashboardSpec extends Specification {
     }
 
     def "should return a model with values"() {
-        given:
-            def a = 1
-
         when:
             def model = dashboard.dashboard()
 

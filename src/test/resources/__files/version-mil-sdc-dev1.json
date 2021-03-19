@@ -1,0 +1,12 @@
+{
+  "build": {
+    "artifact": "ctp.lottery.ie-mil",
+    "name": "LotteryIe MIL SDC",
+    "time": {
+      "nano": 147000000,
+      "epochSecond": 1615201243
+    },
+    "version": "7.4.16",
+    "group": "ctp.lottery.ie"
+  }
+}
