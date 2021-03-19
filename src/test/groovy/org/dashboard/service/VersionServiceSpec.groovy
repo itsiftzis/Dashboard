@@ -84,7 +84,9 @@ class VersionServiceSpec extends Specification {
             1 * versionService.restTemplate.getForObject(_, _, _) >> { throw new IOException("error") }
 
         and:
-            !data["name"]
+            data["name"]
+            data["name"].id == "name"
+            !data["name"].name
     }
 
     @Unroll
@@ -111,5 +113,50 @@ class VersionServiceSpec extends Specification {
             returnedInfoObject | expectedObject
             Info.emptyInfo()   | Info.emptyInfo()
             null               | Info.emptyInfo()
+    }
+
+    def "should handle multiple build objects"() {
+        given:
+            def builds = [new Build(id: "id1", artifact: "artifact1", version: "version1", name: "name1", group: "group1", time: "time1"),
+                          new Build(id: "id2", artifact: "artifact2", version: "version2", name: "name2", group: "group2", time: "time2")]
+            def mappings = ["host1": "url1", "host2": "url2"]
+
+        when:
+            def data = versionService.fetchData()
+
+        then:
+            1 * versionService.configProperties.getMapping() >> mappings
+            2 * versionService.restTemplate.getForObject(_, _, _) >>> [new Info(build: builds[0]), new Info(build: builds[1])]
+
+        and:
+            data["host1"].id == "host1"
+            data["host1"].time == "time1"
+            data["host2"].id == "host2"
+            data["host2"].time == "time2"
+    }
+
+    def "should handle multiple build objects with some of them returning error during fetch"() {
+        given:
+            def builds = [new Build(id: "id1", artifact: "artifact1", version: "version1", name: "name1", group: "group1", time: "time1"),
+                          new Build(id: "id2", artifact: "artifact2", version: "version2", name: "name2", group: "group2", time: "time2"),
+                          new Build(id: "id3", artifact: "artifact3", version: "version3", name: "name3", group: "group3", time: "time3")]
+            def mappings = ["host1": "url1", "host2": "url2", "host3": "url3"]
+
+        when:
+            def data = versionService.fetchData()
+
+        then:
+            1 * versionService.configProperties.getMapping() >> mappings
+            1 * versionService.restTemplate.getForObject("url1", _, _) >> new Info(build: builds[0])
+            1 * versionService.restTemplate.getForObject("url2", _, _) >> new Info(build: builds[1])
+            1 * versionService.restTemplate.getForObject("url3", _, _) >> { throw new IOException("error") }
+
+        and:
+            data["host1"].id == "host1"
+            data["host1"].time == builds[0].time
+            data["host2"].id == "host2"
+            data["host2"].time == builds[1].time
+            data["host3"].id == "host3"
+            !data["host3"].time
     }
 }

@@ -47,7 +47,7 @@ public class VersionService {
         CompletableFuture<List<Build>> completableFuture = allCompletableFuture.toCompletableFuture();
 
         List<Build> sortedList = completableFuture.get();
-        sortedList.sort(Comparator.comparing(Build::getName));
+        sortedList.sort(Comparator.comparing(Build::getName, Comparator.nullsFirst(Comparator.naturalOrder())));
 
         return sortedList.stream().collect(Collectors.toMap(Build::getId, build -> build, (oldV, newV) -> newV, LinkedHashMap::new));
 
@@ -66,6 +66,7 @@ public class VersionService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             info = Info.emptyInfo();
+            info.getBuild().setId(key);
         }
 
         return info.getBuild();
